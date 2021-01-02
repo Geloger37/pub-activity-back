@@ -4,16 +4,15 @@ const pool = require('../data/config');
 // Router
 const router = app => {
     // Display welcome message on the root
-    app.get('/:a', (request, response) => {
+   /* app.get('/:a', (request, response) => {
         const a = request.params.a;
         var c = a*b;
         response.status(200).send(`User added with ID:`+c);
     });
-
+*/
     app.get('/institute', (request, response) => {
         pool.query('SELECT * FROM Institute', (error, result) => {
             if (error) throw error;
-
             response.send(result);
         });
     });
