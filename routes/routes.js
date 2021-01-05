@@ -1,18 +1,20 @@
 // JSON data
 const pool = require('../data/config');
+// const router = require('express').Router();
 
 // Router
 const router = app => {
     // Display welcome message on the root
-   /* app.get('/:a', (request, response) => {
-        const a = request.params.a;
-        var c = a*b;
-        response.status(200).send(`User added with ID:`+c);
-    });
-*/
+    // app.get('/:a', (request, response) => {
+        // const a = request.params.a;
+        // var c = a*b;
+        // response.status(200).send(`User added with ID:`+c);
+    // });
+    
     app.get('/institute', (request, response) => {
         pool.query('SELECT * FROM Institute', (error, result) => {
             if (error) throw error;
+            // console.log(JSON.stringify(result));
             response.send(result);
         });
     });
@@ -35,7 +37,7 @@ const router = app => {
     });
 
     app.delete('/institute/:idInstitute', (request, response) => {
-    const idInstitute = request.params.idInstitute;
+        const idInstitute = request.params.idInstitute;
 
     pool.query('DELETE FROM Institute WHERE idInstitute = ?', idInstitute, (error, result) => {
         if (error) throw error;
@@ -45,6 +47,14 @@ const router = app => {
 });
 
 }
+
+// router.get('/', (req, res) => {
+//     pool.query('SELECT * FROM Institute', function(error, result) {
+//         if(error) throw error;
+
+//         res.send(result);
+//     })
+// });
 
 // Export the router
 module.exports = router;
