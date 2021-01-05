@@ -14,37 +14,39 @@ const router = app => {
     app.get('/institute', (request, response) => {
         pool.query('SELECT * FROM Institute', (error, result) => {
             if (error) throw error;
-            // console.log(JSON.stringify(result));
             response.send(result);
         });
     });
 
     app.post('/institute', (request, response) => {
-        pool.query('INSERT INTO Institute SET ?', request.body, (error, result) => {
-            if (error) throw error;
-
-            response.status(201).send(`User added with ID: ${result.insertId}`);
+        pool.query('SELECT MAX(idInstitute) AS mx, COUNT(idInstitute) AS cnt FROM Institute', (error, result) => {
+            if(error) throw error;
+            let index = (result[0].cnt != 0 ? result[0].mx + 1 : 1)
+            pool.query('INSERT INTO Institute VALUES(?, ?)', [index, request.body.name], (err, res) => {
+                if (err) throw err;
+    
+                response.status(201).send(`User added with ID: ${res.insertId}`);
+            });
         });
+        
     });
 
-    app.put('/institute/:idInstitute', (request, response) => {
-        const idInstitute = request.params.idInstitute;
-        pool.query('UPDATE Institute SET ? WHERE idInstitute = ?', [request.body, idInstitute], (error, result) => {
+    app.put('/institute', (request, response) => {
+        pool.query('UPDATE Institute SET nameInstitute = ? WHERE idInstitute = ?', [request.body.name, request.body.id], (error, result) => {
             if (error) throw error;
 
             response.send('User updated successfully.');
         });
     });
 
-    app.delete('/institute/:idInstitute', (request, response) => {
-        const idInstitute = request.params.idInstitute;
+    app.delete('/institute', (request, response) => {
 
-    pool.query('DELETE FROM Institute WHERE idInstitute = ?', idInstitute, (error, result) => {
-        if (error) throw error;
+        pool.query('DELETE FROM Institute WHERE idInstitute = ?', [request.body.id], (error, result) => {
+            if (error) throw error;
 
-        response.send('User deleted.');
+            response.send('User deleted.');
+        });
     });
-});
 
 }
 
