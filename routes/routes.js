@@ -183,6 +183,41 @@ const router = app => {
             });
         })
 
+        app.route("/employee")
+        .get((request, response) => {
+            pool.query('SELECT * FROM Employees', (error, result) => {
+                if (error) throw error;
+                response.send(result);
+            });
+        })
+        .post((request, response) => {
+            pool.query('SELECT MAX(idEmployee) AS mx, COUNT(idEmployee) AS cnt FROM Employees', (error, result) => {
+                if (error) throw error;
+                let index = (result[0].cnt != 0 ? result[0].mx + 1 : 1)
+                pool.query('INSERT INTO Employees VALUES(?, ?, ?, ?, ?, ?, ?)', [index, request.body.fio, request.body.idcath, request.body.idrank, request.body.iddegree, request.body.idpost, request.body.status], (err, res) => {
+                    if (err) throw err;
+
+                    response.status(201).send(`User added with ID: ${res.insertId}`);
+                });
+            });
+
+        })
+        .put((request, response) => {
+            pool.query('UPDATE Employees SET FIO = ?, idCathedra = ?, idSciRank = ?, idDegree = ?, idPost = ?, status = ? WHERE idEmployee = ?', [request.body.fio, request.body.idcath, request.body.idrank, request.body.iddegree, request.body.idpost, request.body.status, request.body.id], (error, result) => {
+                if (error) throw error;
+
+                response.send('User updated successfully.');
+            });
+        })
+        .delete((request, response) => {
+
+            pool.query('DELETE FROM Employees WHERE idEmployee = ?', [request.body.id], (error, result) => {
+                if (error) throw error;
+
+                response.send('User deleted.');
+            });
+        })
+
     // app.get('/institute', (request, response) => {
     //     pool.query('SELECT * FROM Institute', (error, result) => {
     //         if (error) throw error;
