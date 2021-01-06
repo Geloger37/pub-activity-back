@@ -150,16 +150,16 @@ const router = app => {
 
     app.route("/post")
         .get((request, response) => {
-            pool.query('SELECT * FROM Institute', (error, result) => {
+            pool.query('SELECT * FROM Post', (error, result) => {
                 if (error) throw error;
                 response.send(result);
             });
         })
         .post((request, response) => {
-            pool.query('SELECT MAX(idInstitute) AS mx, COUNT(idInstitute) AS cnt FROM Institute', (error, result) => {
+            pool.query('SELECT MAX(idPost) AS mx, COUNT(idPost) AS cnt FROM Post', (error, result) => {
                 if(error) throw error;
                 let index = (result[0].cnt != 0 ? result[0].mx + 1 : 1)
-                pool.query('INSERT INTO Institute VALUES(?, ?)', [index, request.body.name], (err, res) => {
+                pool.query('INSERT INTO Post VALUES(?, ?, ?)', [index, request.body.name, request.body.val], (err, res) => {
                     if (err) throw err;
         
                     response.status(201).send(`User added with ID: ${res.insertId}`);
@@ -168,7 +168,7 @@ const router = app => {
             
         })
         .put((request, response) => {
-            pool.query('UPDATE Institute SET nameInstitute = ? WHERE idInstitute = ?', [request.body.name, request.body.id], (error, result) => {
+            pool.query('UPDATE Post SET postName = ?, minPlanValue = ? WHERE idPost = ?', [request.body.name, request.body.val, request.body.id], (error, result) => {
                 if (error) throw error;
     
                 response.send('User updated successfully.');
@@ -176,7 +176,7 @@ const router = app => {
         })
         .delete((request, response) => {
 
-            pool.query('DELETE FROM Institute WHERE idInstitute = ?', [request.body.id], (error, result) => {
+            pool.query('DELETE FROM Post WHERE idPost = ?', [request.body.id], (error, result) => {
                 if (error) throw error;
     
                 response.send('User deleted.');
