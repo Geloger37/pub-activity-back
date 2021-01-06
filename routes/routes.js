@@ -114,6 +114,75 @@ const router = app => {
         });
     })
 
+    app.route("/cathedra")
+    .get((request, response) => {
+        pool.query('SELECT * FROM Cathedra', (error, result) => {
+            if (error) throw error;
+            response.send(result);
+        });
+    })
+    .post((request, response) => {
+        pool.query('SELECT MAX(idCathedra) AS mx, COUNT(idCathedra) AS cnt FROM Cathedra ', (error, result) => {
+            if(error) throw error;
+            let index = (result[0].cnt != 0 ? result[0].mx + 1 : 1)
+            pool.query('INSERT INTO Cathedra VALUES(?, ?, ?)', [index, request.body.id, request.body.name], (err, res) => {
+                if (err) throw err;
+    
+                response.status(201).send(`User added with ID: ${res.insertId}`);
+            });
+        });
+        
+    })
+    .put((request, response) => {
+        pool.query('UPDATE Cathedra SET idInstitute = ?, nameCathedra = ? WHERE idCathedra = ?', [request.body.idInst, request.body.name, request.body.id], (error, result) => {
+            if (error) throw error;
+
+            response.send('User updated successfully.');
+        });
+    })
+    .delete((request, response) => {
+        pool.query('DELETE FROM Cathedra WHERE idCathedra = ?', [request.body.id], (error, result) => {
+            if (error) throw error;
+
+            response.send('User deleted.');
+        });
+    })
+
+    app.route("/post")
+        .get((request, response) => {
+            pool.query('SELECT * FROM Institute', (error, result) => {
+                if (error) throw error;
+                response.send(result);
+            });
+        })
+        .post((request, response) => {
+            pool.query('SELECT MAX(idInstitute) AS mx, COUNT(idInstitute) AS cnt FROM Institute', (error, result) => {
+                if(error) throw error;
+                let index = (result[0].cnt != 0 ? result[0].mx + 1 : 1)
+                pool.query('INSERT INTO Institute VALUES(?, ?)', [index, request.body.name], (err, res) => {
+                    if (err) throw err;
+        
+                    response.status(201).send(`User added with ID: ${res.insertId}`);
+                });
+            });
+            
+        })
+        .put((request, response) => {
+            pool.query('UPDATE Institute SET nameInstitute = ? WHERE idInstitute = ?', [request.body.name, request.body.id], (error, result) => {
+                if (error) throw error;
+    
+                response.send('User updated successfully.');
+            });
+        })
+        .delete((request, response) => {
+
+            pool.query('DELETE FROM Institute WHERE idInstitute = ?', [request.body.id], (error, result) => {
+                if (error) throw error;
+    
+                response.send('User deleted.');
+            });
+        })
+
     // app.get('/institute', (request, response) => {
     //     pool.query('SELECT * FROM Institute', (error, result) => {
     //         if (error) throw error;
