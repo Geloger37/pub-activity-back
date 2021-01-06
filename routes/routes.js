@@ -38,12 +38,17 @@ const router = app => {
             });
         })
         .delete((request, response) => {
-
-            pool.query('DELETE FROM Institute WHERE idInstitute = ?', [request.body.id], (error, result) => {
-                if (error) throw error;
-    
-                response.send('User deleted.');
+            pool.query('SELECT COUNT(idCathedra) AS cnt FROM Cathedra WHERE idInstitute = ?', [request.body.id], (err, res) => {
+                if(res[0].cnt == 0)
+                pool.query('DELETE FROM Institute WHERE idInstitute = ?', [request.body.id], (error, result) => {
+                    if (error) throw error;
+        
+                    response.send('User deleted.');
+                });
+                else 
+                    response.status(404).send('')
             });
+            
         })
 
     app.route("/degree")
@@ -73,10 +78,15 @@ const router = app => {
         });
     })
     .delete((request, response) => {
-        pool.query('DELETE FROM Degree WHERE idDegree = ?', [request.body.id], (error, result) => {
-            if (error) throw error;
-
-            response.send('User deleted.');
+        pool.query('SELECT COUNT(idEmployee) AS cnt FROM Employees WHERE idDegree = ?', [request.body.id], (err, res) => {
+            if(res[0].cnt == 0)
+            pool.query('DELETE FROM Degree WHERE idDegree = ?', [request.body.id], (error, result) => {
+                if (error) throw error;
+    
+                response.send('User deleted.');
+            });
+            else 
+                response.status(404).send('')
         });
     })
     
@@ -107,10 +117,15 @@ const router = app => {
         });
     })
     .delete((request, response) => {
-        pool.query('DELETE FROM Sci_rank WHERE idSciRank = ?', [request.body.id], (error, result) => {
-            if (error) throw error;
+        pool.query('SELECT COUNT(idEmployee) AS cnt FROM Employees WHERE idSciRank = ?', [request.body.id], (err, res) => {
+            if(res[0].cnt == 0)
+            pool.query('DELETE FROM Sci_rank WHERE idSciRank = ?', [request.body.id], (error, result) => {
+                if (error) throw error;
 
-            response.send('User deleted.');
+                response.send('User deleted.');
+            });
+            else 
+                response.status(404).send('')
         });
     })
 
@@ -141,10 +156,15 @@ const router = app => {
         });
     })
     .delete((request, response) => {
-        pool.query('DELETE FROM Cathedra WHERE idCathedra = ?', [request.body.id], (error, result) => {
-            if (error) throw error;
+        pool.query('SELECT COUNT(idEmployee) AS cnt FROM Employees WHERE idCathedra = ?', [request.body.id], (err, res) => {
+            if(res[0].cnt == 0)
+            pool.query('DELETE FROM Cathedra WHERE idCathedra = ?', [request.body.id], (error, result) => {
+                if (error) throw error;
 
-            response.send('User deleted.');
+                response.send('User deleted.');
+            });
+            else 
+                response.status(404).send('')
         });
     })
 
@@ -175,15 +195,19 @@ const router = app => {
             });
         })
         .delete((request, response) => {
-
-            pool.query('DELETE FROM Post WHERE idPost = ?', [request.body.id], (error, result) => {
-                if (error) throw error;
-    
-                response.send('User deleted.');
+            pool.query('SELECT COUNT(idEmployee) AS cnt FROM Employees WHERE idPost = ?', [request.body.id], (err, res) => {
+                if(res[0].cnt == 0)
+                pool.query('DELETE FROM Post WHERE idPost = ?', [request.body.id], (error, result) => {
+                    if (error) throw error;
+                
+                    response.send('User deleted.');
+                });
+                else 
+                response.status(404).send('')
             });
         })
 
-        app.route("/employee")
+    app.route("/employee")
         .get((request, response) => {
             pool.query('SELECT * FROM Employees', (error, result) => {
                 if (error) throw error;
